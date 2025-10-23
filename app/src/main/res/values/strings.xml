@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">pratica_jp</string>
     <string name="title_activity_pratica1">pratica1</string>
+    <string name="title_activity_register">RegisterActivity</string>
 </resources>

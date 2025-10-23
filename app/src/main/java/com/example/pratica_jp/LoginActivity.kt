@@ -1,6 +1,8 @@
 package com.example.pratica_jp
 
 import android.app.Activity
+import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -64,12 +66,12 @@ fun LoginPage(modifier: Modifier = Modifier) {
             fontSize = 24.sp
         )
 
-        Spacer (modifier = modifier.size(24.dp))
+        Spacer(modifier = modifier.size(24.dp))
 
         OutlinedTextField(
             value = email,
             label = { Text(text = "Digite seu e-mail") },
-            modifier = modifier.fillMaxWidth(fraction=0.9F),
+            modifier = modifier.fillMaxWidth(fraction = 0.9F),
             onValueChange = { email = it }
         )
 
@@ -78,29 +80,45 @@ fun LoginPage(modifier: Modifier = Modifier) {
         OutlinedTextField(
             value = password,
             label = { Text(text = "Digite sua senha") },
-            modifier = modifier.fillMaxWidth(fraction=0.9F),
+            modifier = modifier.fillMaxWidth(fraction = 0.9F),
             onValueChange = { password = it },
             visualTransformation = PasswordVisualTransformation()
         )
 
-        Spacer (modifier = modifier.size(24.dp))
+        Spacer(modifier = modifier.size(24.dp))
 
         Row(modifier = modifier) {
-            Button( onClick = {
-
+            Button(onClick = {
+                activity.startActivity(
+                    Intent(activity, MainActivity::class.java).setFlags(
+                        FLAG_ACTIVITY_SINGLE_TOP
+                    )
+                )
                 Toast.makeText(activity, "Login OK!", Toast.LENGTH_LONG).show()
 
-            } ) {
+            }) {
                 Text("Login")
             }
 
-            Spacer (modifier = modifier.size(24.dp))
+            Spacer(modifier = modifier.size(24.dp))
 
             Button(
                 onClick = { email = ""; password = "" },
-                enabled = email.isNotEmpty() && password.isNotEmpty()
+                enabled = email.isNotEmpty() || password.isNotEmpty()
             ) {
                 Text("Limpar")
+            }
+
+            Spacer(modifier = modifier.size(24.dp))
+
+            Button(onClick = {
+                activity.startActivity(
+                    Intent(activity, RegisterActivity::class.java).setFlags(
+                        FLAG_ACTIVITY_SINGLE_TOP
+                    )
+                )
+            }) {
+                Text("Registrar-se")
             }
         }
     }
