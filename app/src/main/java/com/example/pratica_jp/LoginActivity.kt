@@ -95,8 +95,8 @@ fun LoginPage(modifier: Modifier = Modifier) {
                     )
                 )
                 Toast.makeText(activity, "Login OK!", Toast.LENGTH_LONG).show()
-
-            }) {
+            }, enabled = email.isNotEmpty() && password.isNotEmpty())
+            {
                 Text("Login")
             }
 
