@@ -7,7 +7,12 @@ buildscript {
     dependencies {
         classpath (
             "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin:2.0.1")
+        classpath (
+            "com.google.gms:google-services:4.4.4"
+        )
     }
+
+
 }
 
 plugins {
@@ -15,4 +20,5 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.compose) apply false
     kotlin("plugin.serialization") version "2.2.20" apply false
+    alias(libs.plugins.google.gms.google.services) apply false
 }

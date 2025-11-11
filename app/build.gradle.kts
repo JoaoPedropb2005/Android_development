@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("org.jetbrains.kotlin.plugin.serialization") version "2.2.20"
     id ("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    //alias(libs.plugins.google.gms.google.services)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -49,6 +51,8 @@ dependencies {
     // Google maps for compose
     implementation("com.google.maps.android:maps-compose:2.8.0")
 
+    implementation("com.google.firebase:firebase-auth:24.0.1")
+
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.4")
     implementation("androidx.navigation:navigation-compose:2.9.5")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
@@ -60,6 +64,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.firebase.auth)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

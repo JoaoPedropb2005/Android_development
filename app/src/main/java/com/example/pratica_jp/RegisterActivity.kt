@@ -33,6 +33,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.pratica_jp.ui.theme.Pratica_jpTheme
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
+
+//private val ERROR.isSuccessful: Boolean
+
 
 class RegisterActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -121,15 +126,28 @@ fun RegisterPage(modifier: Modifier = Modifier) {
 
         Row(modifier = modifier) {
             Button( onClick = {
-                activity.startActivity(
-                    Intent(activity, MainActivity::class.java).setFlags(
-                        FLAG_ACTIVITY_SINGLE_TOP
-                    )
-                )
-                Toast.makeText(activity, "Registro Concluido!", Toast.LENGTH_LONG).show()
-
-                activity.finish()
-
+                Firebase.auth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(activity) { task ->
+                        if (task.isSuccessful) {
+                            Toast.makeText(activity,
+                                "Registro OK!", Toast.LENGTH_LONG).show()
+                        } else {
+                            Toast.makeText(activity,
+                                "Registro FALHOU!", Toast.LENGTH_LONG).show()
+                        }
+                    }
+//                activity.startActivity(
+//                Intent(activity, MainActivity::class.java).setFlags(
+//                    FLAG_ACTIVITY_SINGLE_TOP) )
+//
+//                activity.startActivity(
+//                    Intent(activity, MainActivity::class.java).setFlags(
+//                        FLAG_ACTIVITY_SINGLE_TOP
+//                    )
+//                )
+//                Toast.makeText(activity, "Registro Concluido!", Toast.LENGTH_LONG).show()
+//
+//                activity.finish()
             },
                 enabled = (email.isNotEmpty() && nameUser.isNotEmpty() && password.isNotEmpty()) && password == passwordVerify
             ) {
@@ -139,8 +157,8 @@ fun RegisterPage(modifier: Modifier = Modifier) {
             Spacer (modifier = modifier.size(24.dp))
 
             Button(
-                onClick = { email = ""; password = "" },
-                enabled = email.isNotEmpty() || password.isNotEmpty() || nameUser.isNotEmpty() || passwordVerify.isNotEmpty()
+                onClick = { email = ""; password = ""; nameUser = ""; passwordVerify = "" },
+                enabled = email.isNotEmpty() || password.isNotEmpty() || nameUser.isNotEmpty()  || passwordVerify.isNotEmpty()
             ) {
                 Text("Limpar")
             }
