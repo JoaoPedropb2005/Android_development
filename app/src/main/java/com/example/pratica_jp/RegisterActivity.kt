@@ -1,5 +1,6 @@
 package com.example.pratica_jp
 
+import android.R.attr.name
 import android.app.Activity
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP
@@ -32,6 +33,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.pratica_jp.db.fb.FBDatabase
+import com.example.pratica_jp.db.fb.toFBUser
+import com.example.pratica_jp.model.User
 import com.example.pratica_jp.ui.theme.Pratica_jpTheme
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
@@ -79,7 +83,7 @@ fun RegisterPage(modifier: Modifier = Modifier) {
     var passwordVerify by rememberSaveable { mutableStateOf("") }
     val activity = LocalActivity.current as Activity
     Column(
-        modifier = modifier.padding(16.dp).fillMaxSize(),
+        modifier = modifier.padding(10.dp).fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -88,7 +92,7 @@ fun RegisterPage(modifier: Modifier = Modifier) {
             fontSize = 24.sp
         )
 
-        Spacer (modifier = modifier.size(24.dp))
+        Spacer (modifier = modifier.size(12.dp))
 
         OutlinedTextField(
             value = nameUser,
@@ -122,13 +126,14 @@ fun RegisterPage(modifier: Modifier = Modifier) {
             visualTransformation = PasswordVisualTransformation()
         )
 
-        Spacer (modifier = modifier.size(24.dp))
+       // Spacer (modifier = modifier.size(24.dp))
 
         Row(modifier = modifier) {
             Button( onClick = {
                 Firebase.auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(activity) { task ->
                         if (task.isSuccessful) {
+                            FBDatabase().register(User(nameUser, email).toFBUser())
                             Toast.makeText(activity,
                                 "Registro OK!", Toast.LENGTH_LONG).show()
                         } else {
@@ -154,7 +159,7 @@ fun RegisterPage(modifier: Modifier = Modifier) {
                 Text("Registrar")
             }
 
-            Spacer (modifier = modifier.size(24.dp))
+            Spacer (modifier = modifier.size(12.dp))
 
             Button(
                 onClick = { email = ""; password = ""; nameUser = ""; passwordVerify = "" },
