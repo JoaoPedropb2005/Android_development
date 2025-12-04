@@ -29,6 +29,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.pratica_jp.api.WeatherService
 import com.example.pratica_jp.db.fb.FBDatabase
 import com.example.pratica_jp.model.MainViewModel
 import com.example.pratica_jp.model.MainViewModelFactory
@@ -49,8 +50,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val fbDB = remember { FBDatabase() }
+            val weatherService = remember { WeatherService() }
             val viewModel : MainViewModel = viewModel(
-                factory = MainViewModelFactory(fbDB)
+                factory = MainViewModelFactory(fbDB, weatherService)
             )
             //val viewModel : MainViewModel by viewModels()
             val navController = rememberNavController()
@@ -64,7 +66,7 @@ class MainActivity : ComponentActivity() {
                 if (showDialog) CityDialog(
                     onDismiss = { showDialog = false },
                     onConfirm = { city ->
-                        if (city.isNotBlank()) viewModel.add(city)
+                        if (city.isNotBlank()) viewModel.addCity(city)
                         showDialog = false
                     })
                 Scaffold(

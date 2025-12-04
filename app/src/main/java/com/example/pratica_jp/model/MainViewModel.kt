@@ -4,13 +4,15 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
+import com.example.pratica_jp.api.WeatherService
 import com.example.pratica_jp.db.fb.FBCity
 import com.example.pratica_jp.db.fb.FBDatabase
 import com.example.pratica_jp.db.fb.FBUser
 import com.example.pratica_jp.db.fb.toFBCity
 import com.google.android.gms.maps.model.LatLng
 
-class MainViewModel (private val db: FBDatabase) : ViewModel(), FBDatabase.Listener {
+class MainViewModel (private val db: FBDatabase,
+                     private val service : WeatherService): ViewModel(), FBDatabase.Listener {
     private val _cities = mutableStateListOf<City>()
     val cities
         get() = _cities.toList()
@@ -23,9 +25,24 @@ class MainViewModel (private val db: FBDatabase) : ViewModel(), FBDatabase.Liste
     fun remove(city: City) {
         db.remove(city.toFBCity())
     }
-    fun add(name: String, location : LatLng? = null) {
-        db.add(City(name = name, location = location).toFBCity())
+//    fun add(name: String, location : LatLng? = null) {
+//        db.add(City(name = name, location = location).toFBCity())
+//    }
+    fun addCity(name: String) {
+        service.getLocation(name) { lat, lng ->
+            if (lat != null && lng != null) {
+                db.add(City(name=name, location=LatLng(lat, lng)).toFBCity())
+            }
+        }
     }
+    fun addCity(location: LatLng) {
+        service.getName(location.latitude, location.longitude) { name ->
+            if (name != null) {
+                db.add(City(name = name, location = location).toFBCity())
+            }
+        }
+    }
+
     override fun onUserLoaded(user: FBUser) {
         _user.value = user.toUser()
     }
