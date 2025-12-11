@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import com.example.pratica_jp.api.WeatherService
+import com.example.pratica_jp.api.toForecast
 import com.example.pratica_jp.api.toWeather
 import com.example.pratica_jp.db.fb.FBCity
 import com.example.pratica_jp.db.fb.FBDatabase
@@ -19,7 +20,16 @@ class MainViewModel (private val db: FBDatabase,
     private val _cities = mutableStateMapOf<String, City>()
     val cities : List<City>
         get() = _cities.values.toList().sortedBy { it.name }
+
+    private var _city = mutableStateOf<String?>(null)
+    var city: String?
+        get() = _city.value
+        set(tmp) { _city.value = tmp }
+
     private val _weather = mutableStateMapOf<String, Weather>()
+
+    private val _forecast = mutableStateMapOf<String, List<Forecast>?>()
+
     private val _user = mutableStateOf<User?> (null)
     val user : User?
         get() = _user.value
@@ -76,6 +86,20 @@ class MainViewModel (private val db: FBDatabase,
             }
         }
     }
+
+    fun forecast (name: String) = _forecast.getOrPut(name) {
+        loadForecast(name)
+        emptyList() // return
+    }
+
+    private fun loadForecast(name: String) {
+        service.getForecast(name) { apiForecast ->
+            apiForecast?.let {
+                _forecast[name] = apiForecast.toForecast()
+            }
+        }
+    }
+
 
 }
 

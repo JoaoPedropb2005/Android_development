@@ -69,15 +69,26 @@ fun ListPage(modifier: Modifier = Modifier.Companion, viewModel: MainViewModel) 
         modifier = modifier
             .fillMaxSize()
             .padding(8.dp)
-    ) {
-        items(items = cityList, key = { it.name } ) { city ->
-            CityItem(city = city, weather = viewModel.weather(city.name), onClose = {
+    )
+     {
+        items(cityList, key = {it.name}){ city ->
+            CityItem(city = city, weather = viewModel.weather(city.name), onClick = {
+                viewModel.city = city.name
+                Toast.makeText(activity, "${city.name} Selecionada", Toast.LENGTH_LONG).show()
+            }, onClose = {
                 viewModel.remove(city)
                 Toast.makeText(activity, "${city.name} Excluido", Toast.LENGTH_LONG).show()
-            }, onClick = {
-                Toast.makeText(activity, "${city.name} Aberto", Toast.LENGTH_LONG).show()
             })
         }
+//        items(items = cityList, key = { it.name } ) { city ->
+//            CityItem(city = city, /* weather = viewModel.weather(city.name),*/ onClick = {
+//                viewModel.city = city.name
+//                Toast.makeText(activity, "${city.name} Aberto", Toast.LENGTH_LONG).show()
+//            },onClose = {
+//                viewModel.remove(city)
+//                Toast.makeText(activity, "${city.name} Excluido", Toast.LENGTH_LONG).show()
+//            })
+//        }
     }
 
 //    Column(
