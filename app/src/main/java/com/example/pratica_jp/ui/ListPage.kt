@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import com.example.pratica_jp.model.City
 import com.example.pratica_jp.model.MainViewModel
 import com.example.pratica_jp.model.Weather
+import com.example.pratica_jp.ui.nav.Route
 
 //class ListPage : ComponentActivity() {
 //    override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,6 +75,7 @@ fun ListPage(modifier: Modifier = Modifier.Companion, viewModel: MainViewModel) 
         items(cityList, key = {it.name}){ city ->
             CityItem(city = city, weather = viewModel.weather(city.name), onClick = {
                 viewModel.city = city.name
+                viewModel.page = Route.Home
                 Toast.makeText(activity, "${city.name} Selecionada", Toast.LENGTH_LONG).show()
             }, onClose = {
                 viewModel.remove(city)

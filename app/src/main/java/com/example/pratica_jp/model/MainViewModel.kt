@@ -12,6 +12,7 @@ import com.example.pratica_jp.db.fb.FBCity
 import com.example.pratica_jp.db.fb.FBDatabase
 import com.example.pratica_jp.db.fb.FBUser
 import com.example.pratica_jp.db.fb.toFBCity
+import com.example.pratica_jp.ui.nav.Route
 import com.google.android.gms.maps.model.LatLng
 import kotlin.text.set
 
@@ -29,6 +30,12 @@ class MainViewModel (private val db: FBDatabase,
     private val _weather = mutableStateMapOf<String, Weather>()
 
     private val _forecast = mutableStateMapOf<String, List<Forecast>?>()
+
+    private var _page = mutableStateOf<Route>(Route.Home)
+    var page: Route
+        get() = _page.value
+        set(tmp) { _page.value = tmp }
+
 
     private val _user = mutableStateOf<User?> (null)
     val user : User?
