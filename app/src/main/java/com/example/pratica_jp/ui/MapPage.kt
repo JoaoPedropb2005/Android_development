@@ -12,6 +12,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getDrawable
+import androidx.core.graphics.drawable.toBitmap
+import androidx.core.graphics.scale
+import com.example.pratica_jp.R
 import com.example.pratica_jp.model.MainViewModel
 import com.example.pratica_jp.model.Weather
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -85,9 +89,15 @@ fun MapPage(modifier: Modifier = Modifier.Companion, viewModel: MainViewModel) {
         viewModel.cities.forEach {
             if (it.location != null) {
                 val weather = viewModel.weather(it.name)
+                val image = weather.bitmap ?:
+                        getDrawable(context, R.drawable.loading)!!.toBitmap()
+                val marker = BitmapDescriptorFactory
+                    .fromBitmap(image.scale(120,120))
+
                 val desc = if (weather == Weather.LOADING) "Carregando clima..."
                 else weather.desc
                 Marker( state = MarkerState(position = it.location),
+                    icon = marker,
                     title = it.name, snippet = desc
                 )
             }
