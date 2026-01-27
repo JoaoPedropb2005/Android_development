@@ -15,6 +15,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -78,7 +80,7 @@ fun ListPage(modifier: Modifier = Modifier.Companion, viewModel: MainViewModel) 
         items(cityList, key = {it.name}){ city ->
             CityItem(city = city, weather = viewModel.weather(city.name), onClick = {
                 viewModel.city = city.name
-                viewModel.page = Route.Home
+                //viewModel.page = Route.Home
                 Toast.makeText(activity, "${city.name} Selecionada", Toast.LENGTH_LONG).show()
             }, onClose = {
                 viewModel.remove(city)
@@ -137,9 +139,22 @@ fun CityItem(
         )
         Spacer(modifier = Modifier.size(12.dp))
         Column(modifier = modifier.weight(1f)) {
-            Text(modifier = Modifier,
-                text = city.name,
-                fontSize = 24.sp)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = city.name,
+                    fontSize = 24.sp
+                )
+
+                Spacer(modifier = Modifier.size(8.dp))
+
+                val icon = if (city.isMonitored) Icons.Filled.Notifications else Icons.Outlined.Notifications
+
+                Icon(
+                    imageVector = icon,
+                    contentDescription = "Status de Monitoramento",
+                    modifier = Modifier.size(20.dp) // Tamanho um pouco menor que na Home para ficar elegante na lista
+                )
+            }
             Text(modifier = Modifier,
                 text = desc,
                 fontSize = 16.sp)

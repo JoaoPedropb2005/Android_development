@@ -37,6 +37,8 @@ class MainViewModel (private val db: FBDatabase,
         get() = _page.value
         set(tmp) { _page.value = tmp }
 
+    val cityMap : Map<String, City>
+        get() = _cities.toMap()
 
     private val _user = mutableStateOf<User?> (null)
     val user : User?
@@ -56,6 +58,10 @@ class MainViewModel (private val db: FBDatabase,
                 db.add(City(name=name, location=LatLng(lat, lng)).toFBCity())
             }
         }
+    }
+
+    fun update(city: City){
+        db.update(city.toFBCity())
     }
     fun addCity(location: LatLng) {
         service.getName(location.latitude, location.longitude) { name ->

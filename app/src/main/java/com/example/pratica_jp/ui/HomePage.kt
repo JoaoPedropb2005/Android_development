@@ -30,19 +30,24 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.ui.res.painterResource
+import androidx.room.util.copy
 import coil.compose.AsyncImage
 import com.example.pratica_jp.R
 import com.example.pratica_jp.model.Forecast
 import com.example.pratica_jp.model.MainViewModel
+import com.example.pratica_jp.ui.nav.BottomNavItem.HomeButton.icon
 import java.text.DecimalFormat
 
 @Composable
 fun HomePage(modifier: Modifier = Modifier.Companion, viewModel: MainViewModel) {
     //val activity = LocalActivity.current as Activity
+    val cityName = viewModel.city
 
     Column {
-        if (viewModel.city == null) {
+        if (cityName == null) {
             Column( modifier = Modifier.fillMaxSize()
                 .background(Color.Blue).wrapContentSize(Alignment.Center)
             ) {
@@ -52,18 +57,41 @@ fun HomePage(modifier: Modifier = Modifier.Companion, viewModel: MainViewModel) 
                     textAlign = TextAlign.Center, fontSize = 28.sp )
             }
         } else {
-            Row {
-                AsyncImage( // Substitui o Icon
-                    model = viewModel.weather(viewModel.city!!).imgUrl,
-                    modifier = Modifier.size(140.dp),
-                    error = painterResource(id = R.drawable.loading),
-                    contentDescription = "Imagem"
+
+            val city = viewModel.cityMap[cityName]
+
+            Row(modifier = Modifier.padding(8.dp)) {
+                Icon(
+                    imageVector = Icons.Filled.AccountBox,
+                    contentDescription = "Localized description",
+                    modifier = Modifier.size(150.dp)
                 )
 
                 Column {
                     Spacer(modifier = Modifier.size(12.dp))
-                    Text( text = viewModel.city ?: "Selecione uma cidade...",
-                        fontSize = 28.sp )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = cityName,
+                            fontSize = 28.sp
+                        )
+
+                        if (city != null) {
+                            Spacer(modifier = Modifier.size(12.dp))
+
+                            val icon = if (city.isMonitored) Icons.Filled.Notifications else Icons.Outlined.Notifications
+
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = "Monitorada?",
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .clickable {
+                                        viewModel.update(city.copy(isMonitored = !city.isMonitored))
+                                    }
+                            )
+                        }
+                    }
+
                     viewModel.city?.let { name ->
                         val weather = viewModel.weather(name)
                         Spacer(modifier = Modifier.size(12.dp))
@@ -75,7 +103,7 @@ fun HomePage(modifier: Modifier = Modifier.Companion, viewModel: MainViewModel) 
                     }
                 }
             }
-            viewModel.forecast(viewModel.city!!)?.let { forecasts ->
+            viewModel.forecast(cityName)?.let { forecasts ->
                 LazyColumn {
                     items(items = forecasts) { forecast ->
                         ForecastItem(forecast, onClick = { })
