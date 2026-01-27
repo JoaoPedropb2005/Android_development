@@ -61,10 +61,11 @@ fun HomePage(modifier: Modifier = Modifier.Companion, viewModel: MainViewModel) 
             val city = viewModel.cityMap[cityName]
 
             Row(modifier = Modifier.padding(8.dp)) {
-                Icon(
-                    imageVector = Icons.Filled.AccountBox,
-                    contentDescription = "Localized description",
-                    modifier = Modifier.size(150.dp)
+                AsyncImage( // Substitui o Icon
+                    model = viewModel.weather(viewModel.city!!).imgUrl,
+                    modifier = Modifier.size(140.dp),
+                    error = painterResource(id = R.drawable.loading),
+                    contentDescription = "Imagem"
                 )
 
                 Column {

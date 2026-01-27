@@ -80,7 +80,7 @@ fun ListPage(modifier: Modifier = Modifier.Companion, viewModel: MainViewModel) 
         items(cityList, key = {it.name}){ city ->
             CityItem(city = city, weather = viewModel.weather(city.name), onClick = {
                 viewModel.city = city.name
-                //viewModel.page = Route.Home
+                viewModel.page = Route.Home
                 Toast.makeText(activity, "${city.name} Selecionada", Toast.LENGTH_LONG).show()
             }, onClose = {
                 viewModel.remove(city)
@@ -152,7 +152,7 @@ fun CityItem(
                 Icon(
                     imageVector = icon,
                     contentDescription = "Status de Monitoramento",
-                    modifier = Modifier.size(20.dp) // Tamanho um pouco menor que na Home para ficar elegante na lista
+                    modifier = Modifier.size(20.dp)
                 )
             }
             Text(modifier = Modifier,

@@ -13,12 +13,14 @@ import com.example.pratica_jp.db.fb.FBCity
 import com.example.pratica_jp.db.fb.FBDatabase
 import com.example.pratica_jp.db.fb.FBUser
 import com.example.pratica_jp.db.fb.toFBCity
+import com.example.pratica_jp.monitor.ForecastMonitor
 import com.example.pratica_jp.ui.nav.Route
 import com.google.android.gms.maps.model.LatLng
 import kotlin.text.set
 
 class MainViewModel (private val db: FBDatabase,
-                     private val service : WeatherService): ViewModel(), FBDatabase.Listener {
+                     private val service : WeatherService,
+                     private val monitor: ForecastMonitor): ViewModel(), FBDatabase.Listener {
     private val _cities = mutableStateMapOf<String, City>()
     val cities : List<City>
         get() = _cities.values.toList().sortedBy { it.name }
@@ -75,17 +77,22 @@ class MainViewModel (private val db: FBDatabase,
         _user.value = user.toUser()
     }
     override fun onUserSignOut() {
-        //TODO("Not yet implemented")
+        monitor.cancelAll()
+        _user.value = null
+        _cities.clear()
     }
     override fun onCityAdded(city: FBCity) {
         _cities[city.name!!] = city.toCity()
+        monitor.updateCity(city.toCity())
     }
     override fun onCityUpdated(city: FBCity) {
         _cities.remove(city.name)
         _cities[city.name!!] = city.toCity()
+        monitor.updateCity(city.toCity())
     }
     override fun onCityRemoved(city: FBCity) {
         _cities.remove(city.name)
+        monitor.cancelCity(city.toCity())
     }
 
     fun weather (name: String) = _weather.getOrPut(name) {
