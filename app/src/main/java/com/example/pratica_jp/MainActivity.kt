@@ -35,9 +35,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.pratica_jp.api.WeatherService
 import com.example.pratica_jp.db.fb.FBDatabase
+import com.example.pratica_jp.db.local.LocalDatabase
 import com.example.pratica_jp.model.MainViewModel
 import com.example.pratica_jp.model.MainViewModelFactory
 import com.example.pratica_jp.monitor.ForecastMonitor
+import com.example.pratica_jp.repo.Repository
 import com.example.pratica_jp.ui.CityDialog
 import com.example.pratica_jp.ui.HomePage
 import com.example.pratica_jp.ui.nav.BottomNavBar
@@ -57,8 +59,15 @@ class MainActivity : ComponentActivity() {
             val fbDB = remember { FBDatabase() }
             val weatherService = remember { WeatherService(this) }
             val forecastMonitor = remember { ForecastMonitor(this) }
+
+            val currentUser = Firebase.auth.currentUser
+            val uid = currentUser?.uid ?: "default_user"
+
+            val localDB = remember(uid) { LocalDatabase(this, "db_$uid") }
+            val repository = remember(uid) { Repository(fbDB, localDB) }
+
             val viewModel : MainViewModel = viewModel(
-                factory = MainViewModelFactory(fbDB, weatherService, forecastMonitor)
+                factory = MainViewModelFactory(repository, weatherService, forecastMonitor)
             )
             DisposableEffect(Unit) {
                 val listener = Consumer<Intent> { intent ->
@@ -69,6 +78,8 @@ class MainActivity : ComponentActivity() {
                 onDispose { removeOnNewIntentListener(listener) }
             }
             //val viewModel : MainViewModel by viewModels()
+
+
             val navController = rememberNavController()
             var showDialog by remember { mutableStateOf(false) }
             val currentRoute = navController.currentBackStackEntryAsState()
