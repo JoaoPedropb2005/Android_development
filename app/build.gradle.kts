@@ -8,6 +8,8 @@ plugins {
     id ("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
     //alias(libs.plugins.google.gms.google.services)
     id("com.google.gms.google-services")
+    id("com.google.devtools.ksp") version "2.3.4"
+
 }
 
 android {
@@ -39,12 +41,24 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
-    kotlinOptions {
-        jvmTarget = "11"
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.3"
     }
+
+//    kotlinOptions {
+//        jvmTarget = "11"
+//    }
+
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+        }
+    }
+
     buildFeatures {
         compose = true
         buildConfig = true
@@ -52,6 +66,11 @@ android {
 }
 
 dependencies {
+
+    val room_version = "2.8.4"
+    implementation("androidx.room:room-runtime:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
+    ksp("androidx.room:room-compiler:$room_version")
 
     // Google maps
     implementation("com.google.android.gms:play-services-maps:19.2.0")
