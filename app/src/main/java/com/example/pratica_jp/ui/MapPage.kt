@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -15,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getDrawable
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.scale
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.pratica_jp.R
 import com.example.pratica_jp.model.MainViewModel
 import com.example.pratica_jp.model.Weather
@@ -61,15 +63,15 @@ import com.google.maps.android.compose.rememberCameraPositionState
 
 
 @Composable
-fun MapPage(modifier: Modifier = Modifier.Companion, viewModel: MainViewModel) {
-    val activity = LocalActivity.current as Activity
-    val recife = LatLng(-8.05, -34.9)
-    val caruaru = LatLng(-8.27, -35.98)
-    val joaopessoa = LatLng(-7.12, -34.84)
+fun MapPage(viewModel: MainViewModel) {
 
     val camPosState = rememberCameraPositionState ()
 
     val context = LocalContext.current
+
+    val cities by viewModel.cities.collectAsStateWithLifecycle(initialValue = emptyMap())
+    val weathers by viewModel.weather.collectAsStateWithLifecycle(initialValue = emptyMap())
+
     val hasLocationPermission by remember {
         mutableStateOf(
             ContextCompat.checkSelfPermission(context,
@@ -86,24 +88,37 @@ fun MapPage(modifier: Modifier = Modifier.Companion, viewModel: MainViewModel) {
         uiSettings = MapUiSettings(myLocationButtonEnabled = true)
     )
     {
-        viewModel.cities.forEach {
-            if (it.location != null) {
-                val weather = viewModel.weather(it.name)
+
+        cities.values.forEach { city ->
+            if (city.location != null) {
+                val weather = weathers[city.name] ?: Weather.LOADING
+
+                LaunchedEffect(city.name) {
+                    viewModel.loadWeather(city.name)
+                }
+                LaunchedEffect(weather.imgUrl) { // Dispara quando a URL da imagem estiver disponível
+                    viewModel.loadBitmap(city.name)
+                }
+
+
+                // Define o ícone (Bitmap)
                 val image = weather.bitmap ?:
-                        getDrawable(context, R.drawable.loading)!!.toBitmap()
-                val marker = BitmapDescriptorFactory
-                    .fromBitmap(image.scale(120,120))
+                getDrawable(context, R.drawable.loading)!!.toBitmap()
+
+                val markerIcon = remember(image) {
+                    BitmapDescriptorFactory.fromBitmap(image.scale(120, 120))
+                }
 
                 val desc = if (weather == Weather.LOADING) "Carregando clima..."
                 else weather.desc
-                Marker( state = MarkerState(position = it.location),
-                    icon = marker,
-                    title = it.name, snippet = desc
+
+                Marker(
+                    state = MarkerState(position = city.location),
+                    icon = markerIcon,
+                    title = city.name,
+                    snippet = desc
                 )
             }
         }
-
     }
-
-
 }
